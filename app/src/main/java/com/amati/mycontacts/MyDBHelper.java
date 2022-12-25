@@ -1,5 +1,6 @@
 package com.amati.mycontacts;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -43,7 +44,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
     public ArrayList<ContactModel> fetchData() {
         ArrayList<ContactModel> contacts = new ArrayList<>();
         SQLiteDatabase sql = this.getReadableDatabase();
-        Cursor cursor = sql.rawQuery("SELECT * FROM "+TABLE_NAME,null);
+        @SuppressLint("Recycle") Cursor cursor = sql.rawQuery("SELECT * FROM " + TABLE_NAME, null);
 
         ArrayList<ContactModel> result = new ArrayList<>();
         while (cursor.moveToNext()) {
@@ -54,5 +55,22 @@ public class MyDBHelper extends SQLiteOpenHelper {
             result.add(contact);
         }
         return result;
+    }
+    //Update table
+
+    public void updateData(ContactModel contactModel) {
+        SQLiteDatabase sql = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put("name", contactModel.name);
+        contentValues.put("number", contactModel.number);
+
+        sql.update(TABLE_NAME, contentValues, "id = " + contactModel.id, null);
+
+    }
+
+    //delete data
+    public void deleteData(int id) {
+        SQLiteDatabase sql = this.getWritableDatabase();
+        sql.delete(TABLE_NAME, "id = ?", new String[]{String.valueOf(id)});
     }
 }
